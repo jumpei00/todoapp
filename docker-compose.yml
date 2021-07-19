@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+    gunicorn:
+        container_name: gunicorn
+        build: .
+        ports: 
+            - "8000:8000"
+        volumes:
+            - .:/todo_app/
+        command: gunicorn --bind 0.0.0.0:8000 main:app
+    
+    nginx:
+        container_name: nginx
+        image: nginx
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/gunicorn.conf:/etc/nginx/conf.d/default.conf
+            - ./static/:/opt/apps/static/
+        depends_on:
+            - gunicorn
